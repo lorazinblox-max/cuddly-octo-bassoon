@@ -1,0 +1,87 @@
+local Players = game:GetService("Players")
+local VirtualUser = game:GetService("VirtualUser")
+local LocalPlayer = Players.LocalPlayer
+
+LocalPlayer.Idled:Connect(function()
+    VirtualUser:CaptureController()
+    VirtualUser:ClickButton2(Vector2.new())
+end)
+
+local ScreenGui = Instance.new("ScreenGui")
+local MainFrame = Instance.new("Frame")
+local UICorner = Instance.new("UICorner")
+local UIStroke = Instance.new("UIStroke")
+local Title = Instance.new("TextLabel")
+local ToggleButton = Instance.new("TextButton")
+local ButtonCorner = Instance.new("UICorner")
+
+ScreenGui.Name = "UniversalAntiAFK"
+ScreenGui.Parent = (gethui and gethui()) or game:GetService("CoreGui") or LocalPlayer:WaitForChild("PlayerGui")
+ScreenGui.ResetOnSpawn = false
+
+-- Configurações do Frame Principal
+MainFrame.Name = "MainFrame"
+MainFrame.Parent = ScreenGui
+MainFrame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+MainFrame.Position = UDim2.new(0.5, -100, 0.5, -50)
+MainFrame.Size = UDim2.new(0, 200, 0, 100)
+MainFrame.Active = true
+MainFrame.Draggable = true -- Permite arrastar a UI pela tela
+
+UICorner.CornerRadius = UDim.new(0, 12)
+UICorner.Parent = MainFrame
+
+UIStroke.Color = Color3.fromRGB(0, 120, 255) -- Azul
+UIStroke.Thickness = 2
+UIStroke.Parent = MainFrame
+
+Title.Name = "Title"
+Title.Parent = MainFrame
+Title.BackgroundTransparency = 1
+Title.Position = UDim2.new(0, 0, 0, 5)
+Title.Size = UDim2.new(1, 0, 0, 30)
+Title.Font = Enum.Font.GothamBold
+Title.Text = "Universal Anti-AFK"
+Title.TextColor3 = Color3.fromRGB(255, 255, 255)
+Title.TextSize = 16
+
+ToggleButton.Name = "ToggleButton"
+ToggleButton.Parent = MainFrame
+ToggleButton.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+ToggleButton.Position = UDim2.new(0.1, 0, 0.45, 0)
+ToggleButton.Size = UDim2.new(0.8, 0, 0, 40)
+ToggleButton.Font = Enum.Font.GothamSemibold
+ToggleButton.Text = "Anti-AFK Off ❌"
+ToggleButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+ToggleButton.TextSize = 14
+
+ButtonCorner.CornerRadius = UDim.new(0, 8)
+ButtonCorner.Parent = ToggleButton
+
+local antiAfkEnabled = false
+
+local function jumpLoop()
+    while antiAfkEnabled do
+        local character = LocalPlayer.Character
+        if character then
+            local humanoid = character:FindFirstChildOfClass("Humanoid")
+            if humanoid then
+                humanoid.Jump = true
+            end
+        end
+        task.wait(600)
+    end
+end
+
+ToggleButton.MouseButton1Click:Connect(function()
+    antiAfkEnabled = not antiAfkEnabled
+    
+    if antiAfkEnabled then
+        ToggleButton.Text = "Anti-AFK On ✅"
+        ToggleButton.TextColor3 = Color3.fromRGB(0, 255, 127)
+        task.spawn(jumpLoop)
+    else
+        ToggleButton.Text = "Anti-AFK Off ❌"
+        ToggleButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+    end
+end)
