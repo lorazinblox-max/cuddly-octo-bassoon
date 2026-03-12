@@ -1,0 +1,133 @@
+-- Sxtyny's Easy GodHacker666
+
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+local TARGET_PLACE_ID = 131832665672192
+
+-- FORÇA a GUI aparecer
+local function makeGUI(statusText, statusColor)
+    -- Remove GUI antiga se existir
+    local old = LocalPlayer.PlayerGui:FindFirstChild("SxtynysHack")
+    if old then old:Destroy() end
+
+    local ScreenGui = Instance.new("ScreenGui")
+    ScreenGui.Name = "SxtynysHack"
+    ScreenGui.ResetOnSpawn = false
+    ScreenGui.Parent = LocalPlayer.PlayerGui
+
+    local Frame = Instance.new("Frame")
+    Frame.Size = UDim2.new(0, 400, 0, 180)
+    Frame.Position = UDim2.new(0.5, -200, 0.5, -90)
+    Frame.BackgroundColor3 = Color3.new(0, 0, 0)
+    Frame.BorderSizePixel = 0
+    Frame.Parent = ScreenGui
+
+    Instance.new("UICorner", Frame).CornerRadius = UDim.new(0, 16)
+
+    local stroke = Instance.new("UIStroke", Frame)
+    stroke.Color = Color3.fromRGB(0, 120, 255)
+    stroke.Thickness = 3
+
+    local title = Instance.new("TextLabel", Frame)
+    title.Size = UDim2.new(1, 0, 0, 45)
+    title.Position = UDim2.new(0, 0, 0, 10)
+    title.BackgroundTransparency = 1
+    title.Text = "Sxtyny's Easy GodHacker666"
+    title.TextColor3 = Color3.new(1, 1, 1)
+    title.TextSize = 20
+    title.Font = Enum.Font.GothamBold
+
+    local desc = Instance.new("TextLabel", Frame)
+    desc.Size = UDim2.new(1, -20, 0, 70)
+    desc.Position = UDim2.new(0, 10, 0, 55)
+    desc.BackgroundTransparency = 1
+    desc.Text = 'This script deletes the spawner and stuff that can kill you so you can play without dying and get the skin, when the text "Not Done" turns into "Done" you can join'
+    desc.TextColor3 = Color3.fromRGB(200, 200, 200)
+    desc.TextSize = 11
+    desc.Font = Enum.Font.Gotham
+    desc.TextWrapped = true
+
+    local status = Instance.new("TextLabel", Frame)
+    status.Size = UDim2.new(1, 0, 0, 30)
+    status.Position = UDim2.new(0, 0, 0, 135)
+    status.BackgroundTransparency = 1
+    status.Text = statusText
+    status.TextColor3 = statusColor
+    status.TextSize = 18
+    status.Font = Enum.Font.GothamBold
+
+    return status
+end
+
+-- MAIN
+if game.PlaceId == TARGET_PLACE_ID then
+    -- Tá no jogo certo
+    local statusLabel = makeGUI("Not Done", Color3.fromRGB(255, 50, 50))
+
+    task.wait(4)
+
+    -- Tenta achar e deletar
+    local ok = pcall(function()
+        local pg = LocalPlayer.PlayerGui
+        local mg = pg:WaitForChild("mainGame", 15)
+        local rg = mg:WaitForChild("realGame", 15)
+
+        if rg:FindFirstChild("spawners") then
+            rg.spawners:Destroy()
+        end
+        if rg:FindFirstChild("cold") then
+            rg.cold:Destroy()
+        end
+    end)
+
+    if ok then
+        statusLabel.Text = "Done"
+        statusLabel.TextColor3 = Color3.fromRGB(50, 255, 80)
+    else
+        statusLabel.Text = "Error"
+        statusLabel.TextColor3 = Color3.fromRGB(255, 165, 0)
+    end
+
+else
+    -- Não tá no jogo, tenta entrar
+    local old = LocalPlayer.PlayerGui:FindFirstChild("SxtynysHack")
+    if old then old:Destroy() end
+
+    local sg = Instance.new("ScreenGui")
+    sg.Name = "SxtynysHack"
+    sg.ResetOnSpawn = false
+    sg.Parent = LocalPlayer.PlayerGui
+
+    local bg = Instance.new("Frame", sg)
+    bg.Size = UDim2.new(1, 0, 1, 0)
+    bg.BackgroundColor3 = Color3.new(0, 0, 0)
+    bg.BorderSizePixel = 0
+
+    local lbl = Instance.new("TextLabel", bg)
+    lbl.Size = UDim2.new(1, -40, 0, 100)
+    lbl.Position = UDim2.new(0, 20, 0.5, -50)
+    lbl.BackgroundTransparency = 1
+    lbl.Text = "JOINER | STATUS: JOINING GAME ID: " .. TARGET_PLACE_ID
+    lbl.TextColor3 = Color3.new(1, 1, 1)
+    lbl.TextSize = 26
+    lbl.Font = Enum.Font.GothamBold
+    lbl.TextWrapped = true
+
+    task.wait(1)
+
+    local ok = pcall(game.GetService, game, "TeleportService")
+    if ok then
+        pcall(function()
+            game:GetService("TeleportService"):Teleport(TARGET_PLACE_ID, LocalPlayer)
+        end)
+        task.wait(3)
+        pcall(function()
+            game:GetService("TeleportService"):TeleportAsync(TARGET_PLACE_ID, {LocalPlayer})
+        end)
+        task.wait(3)
+    end
+
+    lbl.Text = "JOINER | STATUS: JOINER NOT WORKING JOIN THE GAME MANUALLY"
+    task.wait(5)
+    LocalPlayer:Kick('Join "Hide in the attic from john bob and george hampleton" | By Sxtyny')
+end
